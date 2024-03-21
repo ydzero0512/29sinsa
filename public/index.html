@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Images</title>
+    <!-- 부트스트랩 CDN 추가 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <style>
+    @font-face {
+      font-family: "GmarketSansMedium";
+      src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
+        format("woff");
+      font-weight: normal;
+      font-style: normal;
+    }
+    body {
+      font-family: "GmarketSansMedium";
+    }
+    p {
+      margin-bottom: 0.5rem;
+    }
+    #price {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    #brand {
+      font-weight: bold;
+    }
+    .input-group {
+      padding: 10px;
+    }
+    h6 {
+      text-align: center;
+    }
+    img {
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #keywordInput {
+      border: none;
+      border-bottom: 4px solid black;
+      border-radius: 0px;
+    }
+    .btn-primary {
+      border-radius: 50px !important;
+      background: none;
+      border: 5px solid black;
+      color: black;
+    }
+    .col {
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-secondary {
+      margin-top: auto;
+      background: dimgray;
+    }
+  </style>
+  <body>
+    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">카테고리</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav" id="categoryNav">
+       
+          </ul>
+        </div>
+      </div>
+    </nav> -->
+    <!-- 키워드 입력 필드 -->
+    <div class="input-group">
+      <input
+        type="text"
+        id="keywordInput"
+        class="form-control"
+        placeholder="상품명을 입력하세요."
+      />
+      <button
+        class="btn btn-primary"
+        type="button"
+        onclick="fetchProductImages()"
+      >
+        검색
+      </button>
+    </div>
+    <h6>검색어를 입력하면 29cm의 상품들이 나타납니다.</h6>
+    <h6>이미지를 클릭하면 29cm의 상품정보로 이동합니다.</h6>
+    <div class="container">
+      <div class="row row-cols-2 row-cols-lg-4 g-4" id="imageContainer">
+        <!-- 여기에 제품 이미지가 표시될 것입니다 -->
+      </div>
+    </div>
+
+    <div id="pagination" class="d-flex justify-content-center mt-4"></div>
+
+    <!-- Axios 및 스크립트 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="product.js"></script>
+    <script>
+      document
+        .getElementById("keywordInput")
+        .addEventListener("keyup", function (event) {
+          // 엔터 키인지 확인
+          if (event.key === "Enter") {
+            // 검색 함수 호출
+            fetchProductImages();
+          }
+        });
+    </script>
+  </body>
+</html>
