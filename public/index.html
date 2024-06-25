@@ -3,125 +3,146 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product Images</title>
-    <!-- 부트스트랩 CDN 추가 -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Chat Stream</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      #container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      #textInput {
+        width: calc(100% - 80px);
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px 0 0 5px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      #textInput:focus {
+        border-color: #007bff;
+      }
+
+      #inputBtn {
+        width: 80px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-size: 14px;
+        outline: none;
+      }
+
+      #inputBtn:hover {
+        background-color: #0056b3;
+      }
+
+      #results {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        min-height: 200px;
+        max-height: 600px;
+        overflow-y: auto;
+        white-space: pre-wrap; /* 줄 바꿈 허용 */
+      }
+
+      .user-message {
+        text-align: right;
+        margin-bottom: 10px;
+        color: #007bff;
+      }
+
+      .assistant-message {
+        text-align: left;
+        margin-bottom: 10px;
+        color: #333;
+      }
+    </style>
   </head>
-  <style>
-    @font-face {
-      font-family: "GmarketSansMedium";
-      src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
-        format("woff");
-      font-weight: normal;
-      font-style: normal;
-    }
-    body {
-      font-family: "GmarketSansMedium";
-    }
-    p {
-      margin-bottom: 0.5rem;
-    }
-    #price {
-      font-weight: bold;
-      font-size: 18px;
-    }
-    #brand {
-      font-weight: bold;
-    }
-    .input-group {
-      padding: 10px;
-    }
-    h6 {
-      text-align: center;
-    }
-    img {
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    #keywordInput {
-      border: none;
-      border-bottom: 4px solid black;
-      border-radius: 0px;
-    }
-    .btn-primary {
-      border-radius: 50px !important;
-      background: none;
-      border: 5px solid black;
-      color: black;
-    }
-    .col {
-      display: flex;
-      flex-direction: column;
-    }
-    .btn-secondary {
-      margin-top: auto;
-      background: dimgray;
-    }
-  </style>
   <body>
-    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">카테고리</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav" id="categoryNav">
-       
-          </ul>
-        </div>
+    <div id="container">
+      <h1>셀하 상품명 만들기 챗봇</h1>
+      <div style="display: flex; align-items: center">
+        <input type="text" id="textInput" placeholder="예시)감자" />
+        <button id="inputBtn" onclick="startStream()">확인</button>
       </div>
-    </nav> -->
-    <!-- 키워드 입력 필드 -->
-    <div class="input-group">
-      <input
-        type="text"
-        id="keywordInput"
-        class="form-control"
-        placeholder="상품명을 입력하세요."
-      />
-      <button
-        class="btn btn-primary"
-        type="button"
-        onclick="fetchProductImages()"
-      >
-        검색
-      </button>
-    </div>
-    <h6>검색어를 입력하면 29cm의 상품들이 나타납니다.</h6>
-    <h6>이미지를 클릭하면 29cm의 상품정보로 이동합니다.</h6>
-    <div class="container">
-      <div class="row row-cols-2 row-cols-lg-4 g-4" id="imageContainer">
-        <!-- 여기에 제품 이미지가 표시될 것입니다 -->
-      </div>
+      <div id="results"></div>
     </div>
 
-    <div id="pagination" class="d-flex justify-content-center mt-4"></div>
-
-    <!-- Axios 및 스크립트 -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="product.js"></script>
     <script>
-      document
-        .getElementById("keywordInput")
-        .addEventListener("keyup", function (event) {
-          // 엔터 키인지 확인
-          if (event.key === "Enter") {
-            // 검색 함수 호출
-            fetchProductImages();
+      let previousContent = ""; // 이전 질문의 답변을 저장할 변수
+      const resultsDiv = document.getElementById("results");
+      // 이전 질문의 답변을 비우는 함수
+      function clearPreviousContent() {
+        resultsDiv.innerHTML = ""; // 결과 창 초기화
+        previousContent = ""; // 이전 답변 초기화
+      }
+
+      function startStream() {
+        const textInput = document.getElementById("textInput").value;
+        clearPreviousContent();
+        const eventSource = new EventSource(
+          `/29mu/chat?text=${encodeURIComponent(textInput)}`
+        );
+
+        eventSource.onmessage = function (event) {
+          const data = event.data; // 받은 데이터는 JSON이 아니라 일반 문자열
+          const content = data;
+
+          if (content !== "") {
+            const messageClass =
+              event.role === "user" ? "user-message" : "assistant-message";
+            const messageContainer = document.createElement("span");
+            messageContainer.classList.add(messageClass);
+            messageContainer.textContent = content;
+            resultsDiv.appendChild(messageContainer);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight; // 스크롤 맨 아래로 이동
+          } else {
+            resultsDiv.appendChild(document.createElement("br"));
           }
+        };
+
+        eventSource.onerror = function () {
+          console.error("EventSource encountered an error.");
+          resultsDiv.appendChild(document.createElement("hr"));
+          eventSource.close();
+        };
+
+        eventSource.addEventListener("end", function () {
+          console.log("EventSource connection closed.");
+          resultsDiv.appendChild(document.createElement("hr"));
+          eventSource.close();
+        });
+      }
+
+      // 버튼을 다시 누를 때 이전 답변 지우기
+      document
+        .getElementById("inputBtn")
+        .addEventListener("click", function () {
+          clearPreviousContent();
         });
     </script>
   </body>
